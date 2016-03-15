@@ -142,6 +142,7 @@ function get_velocity(cell) {
 }
 
 function get_equi(subcell_num, density, velocity, v_dot_v) {
+	var dv;
 	switch(subcell_num) {
 		case 0:
 			return FOUR_DIV_9 * density * (1 - 1.5 * v_dot_v / c2);

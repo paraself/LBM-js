@@ -2,7 +2,7 @@ var lbmCanvas;
 var lbmContext;
 
 function on_body_load() {
-	lbmCanvas = document.getElementById("lbmCanvas");
+	lbmCanvas = document.getElementById("lbm_canvas");
 	lbmContext = lbmCanvas.getContext("2d");
 	lbmCanvas.setAttribute("height", GRID_SIZE_Y * SCALE);
 	lbmCanvas.setAttribute("width", GRID_SIZE_X * SCALE);
@@ -11,7 +11,7 @@ function on_body_load() {
 
 function get_color(cell) {
 	var col = cell[0] + cell[1] + cell[2] + cell[3] + cell[4] + cell[5] + cell[6] + cell[7] + cell[8];
-	col = (255 - col) | 0; // truncate
+	col = 255 - col | 0; // truncate
 	return "rgb(" + col + ", " + col + ", " + col + ")";
 }
 

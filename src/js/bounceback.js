@@ -15,8 +15,7 @@ function bounceback_top(cells_src, cells_dst) {
 }
 
 function bounceback_bottom(cells_src, cells_dst) {
-	var max_c = cells_src.length - 1;
-	var max_r = cells_src[max_c].length - 1;
+	var max_r = cells_src[0].length - 1;
 	for (var c = 1; c < cells_src.length - 1; c++) {
 		for (var r = 1; r < cells_src[c].length - 1; r++) {
 			cells_dst[c][max_r][0] = cells_src[c][max_r][0];
@@ -48,7 +47,6 @@ function bounceback_left(cells_src, cells_dst) {
 
 function bounceback_right(cells_src, cells_dst) {
 	var max_c = cells_src.length - 1;
-	var max_r = cells_src[max_c].length - 1;
 	for (var r = 1; r < cells_src[0].length - 1; r++) {
 		cells_dst[max_c][r][0] = cells_src[max_c][r][0];
 		cells_dst[max_c][r][1] = cells_src[max_c - 1][r][1];
@@ -74,7 +72,6 @@ function bounceback_topleft(cells_src, cells_dst) {
 
 function bounceback_topright(cells_src, cells_dst) {
 	var max_c = cells_src.length - 1;
-	var max_r = cells_src[max_c].length - 1;
 	cells_dst[max_c][0][0] = cells_src[max_c][0][0];
 	cells_dst[max_c][0][1] = cells_src[max_c - 1][0][1];
 	cells_dst[max_c][0][2] = cells_src[max_c][1][2];
@@ -85,8 +82,7 @@ function bounceback_topright(cells_src, cells_dst) {
 }
 
 function bounceback_bottomleft(cells_src, cells_dst) {
-	var max_c = cells_src.length - 1;
-	var max_r = cells_src[max_c].length - 1;
+	var max_r = cells_src[0].length - 1;
 	cells_dst[0][max_r][0] = cells_src[0][max_r][0];
 	cells_dst[0][max_r][1] = cells_src[0][max_r][3];
 	cells_dst[0][max_r][2] = cells_src[0][max_r][4];
@@ -98,7 +94,7 @@ function bounceback_bottomleft(cells_src, cells_dst) {
 
 function bounceback_bottomright(cells_src, cells_dst) {
 	var max_c = cells_src.length - 1;
-	var max_r = cells_src[max_c].length - 1;
+	var max_r = cells_src[0].length - 1;
 	cells_dst[max_c][max_r][0] = cells_src[max_c][max_r][0];
 	cells_dst[max_c][max_r][1] = cells_src[max_c - 1][max_r][1];
 	cells_dst[max_c][max_r][2] = cells_src[max_c][max_r][4];

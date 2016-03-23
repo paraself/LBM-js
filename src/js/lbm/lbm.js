@@ -1,16 +1,14 @@
-// visualization parameters
-var GRID_SIZE_X = 150;
-var GRID_SIZE_Y = 100;
-var SCALE = 3;
+var lbm_options = {
+	"omega": 1.8,
+	"c": 1
+};
 
-// LBM parameters
-var omega = 1.8;
-var c = 1;
-var c2 = Math.pow(c, 2);
+var c2 = Math.pow(lbm_options.c, 2);
 var c4 = Math.pow(c2, 2);
 
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
+var densities;
 var which_cells = true;
 
 // constants
@@ -34,29 +32,34 @@ var directions = [
 	new Vec2(1, 1)
 ];
 
+// functions to be used
 var init_cells = init_cells_dirac;
+var boundary = {
+	"top": bounceback_top,
+	"bottom": bounceback_bottom,
+	"left": bounceback_left,
+	"right": bounceback_right,
+	"topleft": bounceback_topleft,
+	"bottomleft": bounceback_bottomleft,
+	"topright": bounceback_topright,
+	"bottomright": bounceback_bottomright
+};
 
-// boundary conditions
-var boundary_top = bounceback_top;
-var boundary_bottom = bounceback_bottom;
-var boundary_left = bounceback_left;
-var boundary_right = bounceback_right;
-
-var boundary_topleft = bounceback_topleft;
-var boundary_topright = bounceback_topright;
-var boundary_bottomleft = bounceback_bottomleft;
-var boundary_bottomright = bounceback_bottomright;
-
+var stop = true;
 
 function make_cells(cols, rows) {
-	var cells = new Array(cols);
+	cells1 = new Array(cols);
+	cells2 = new Array(cols);
+	densities = new Array(cols);
 	for (var c = 0; c < cols; c++) {
-		cells[c] = new Array(rows);
+		cells1[c] = new Array(rows);
+		cells2[c] = new Array(rows);
+		densities[c] = new Array(rows);
 		for (var r = 0; r < rows; r++) {
-			cells[c][r] = new Array(9);
+			cells1[c][r] = new Array(9);
+			cells2[c][r] = new Array(9);
 		}
 	}
-	return cells;
 }
 
 function propagate(cells_src, cells_dst) {
@@ -79,47 +82,41 @@ function propagation(cells_src, cells_dst) {
 	// middle
 	propagate(cells_src, cells_dst);
 
-	// edges
-	boundary_top(cells_src, cells_dst);
-	boundary_bottom(cells_src, cells_dst);
-	boundary_left(cells_src, cells_dst);
-	boundary_right(cells_src, cells_dst);
-
-	// corners
-	boundary_topleft(cells_src, cells_dst);
-	boundary_topright(cells_src, cells_dst);
-	boundary_bottomleft(cells_src, cells_dst);
-	boundary_bottomright(cells_src, cells_dst);
+	// all boundary conditions
+	for (var i = 0; i < boundary.length; i++) {
+		boundary[i](cells_src, cells_dst);
+	}
 }
 
 function collision(cells_coll) {
 	for (var c = 0; c < cells_coll.length; c++) {
 		for (var r = 0; r < cells_coll[c].length; r++) {
-			var density = get_density(cells_coll[c][r]);
+
+			// save densities for visualization
+			densities[c][r] = get_density(cells_coll[c][r]);
 			var velocity = get_velocity(cells_coll[c][r]);
 			var v_dot_v = velocity.dot(velocity);
 			for (var i = 0; i < 9; i++) {
-				cells_coll[c][r][i] = (1 - omega) * cells_coll[c][r][i] + omega * get_equi(i, density, velocity, v_dot_v);
+				cells_coll[c][r][i] = (1 - lbm_options.omega) * cells_coll[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocity, v_dot_v);
 			}
 		}
 	}
 }
 
 function simulate() {
-	if (which_cells) {
-		propagation(cells1, cells2);
-		cells = cells2;
-	} else {
-		propagation(cells2, cells1);
-		cells = cells1;
+	while (!stop) {
+		if (which_cells) {
+			propagation(cells1, cells2);
+			cells = cells2;
+		} else {
+			propagation(cells2, cells1);
+			cells = cells1;
+		}
+		which_cells = !which_cells;
+		collision(cells);
+		
+		postMessage(densities);
 	}
-	which_cells = !which_cells;
-	collision(cells);
-	
-	repaint();
-
-	// schedule next step
-	setTimeout(simulate, 1);
 }
 
 function get_density(cell) {
@@ -152,9 +149,35 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 	}
 }
 
-function init() {
-	cells1 = make_cells(GRID_SIZE_X, GRID_SIZE_Y);
-	cells2 = make_cells(GRID_SIZE_X, GRID_SIZE_Y);
+// message handler
+self.onmessage = function(ev) {
+	var cmd = ev.data.cmd;
+	var value = ev.data.value;
+	switch (cmd) {
+		case "set":
+			var option = ev.data.option;
+			lbm_options[option] = value;
+			break;
+		case "run":
+			if (stop) {
+				stop = false;
+				run();
+			}
+			break;
+		case "pause":
+			stop = true;
+			break;
+		case "continue":
+			if (stop) {
+				stop = false;
+				simulate();
+			}
+			break;
+	}
+};
+
+function run() {
+	make_cells(lbm_options.cols, lbm_options.rows);
 	init_cells(cells1);
 	init_cells(cells2);
 	cells = cells1;

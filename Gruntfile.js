@@ -6,15 +6,24 @@ module.exports = function(grunt) {
       options: {
         separator: ';'
       },
-      dist: {
-        src: ['src/js/**/*.js'],
-        dest: 'dist/js/<%= pkg.name %>.js'
+      lbm: {
+        src: ['src/js/lbm/**/*.js'],
+        dest: 'dist/js/lbm.js'
+      },
+      control: {
+        src: ['src/js/*.js'],
+        dest: 'dist/js/control.js'
       }
     },
     uglify: {
-      dist: {
+      lbm: {
         files: {
-          'dist/js/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+          'dist/js/lbm.min.js': ['<%= concat.lbm.dest %>']
+        }
+      },
+      control: {
+        files: {
+          'dist/js/control.min.js': ['<%= concat.control.dest %>']
         }
       }
     },

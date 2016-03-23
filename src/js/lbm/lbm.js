@@ -3,6 +3,7 @@ var lbm_options = {
 	"c": 1
 };
 
+// TODO: recalculate when modifying c
 var c2 = Math.pow(lbm_options.c, 2);
 var c4 = Math.pow(c2, 2);
 
@@ -104,7 +105,7 @@ function collision(cells_coll) {
 }
 
 function simulate() {
-	while (!stop) {
+	if (!stop) {
 		if (which_cells) {
 			propagation(cells1, cells2);
 			cells = cells2;
@@ -114,9 +115,15 @@ function simulate() {
 		}
 		which_cells = !which_cells;
 		collision(cells);
-		
+
 		postMessage(densities);
+
+		// use setTimeout to still be able to receive messages
+		setTimeout(simulate, 1);
 	}
+
+	// wait longer when paused
+	setTimeout(simulate, 100);
 }
 
 function get_density(cell) {
@@ -159,27 +166,23 @@ self.onmessage = function(ev) {
 			lbm_options[option] = value;
 			break;
 		case "run":
-			if (stop) {
-				stop = false;
-				run();
-			}
+			stop = true;
+			init();
+			simulate();
+			stop = false;
 			break;
-		case "pause":
+		case "stop":
 			stop = true;
 			break;
 		case "continue":
-			if (stop) {
-				stop = false;
-				simulate();
-			}
-			break;
+			stop = false;
+			simulate();
 	}
 };
 
-function run() {
+function init() {
 	make_cells(lbm_options.cols, lbm_options.rows);
 	init_cells(cells1);
 	init_cells(cells2);
 	cells = cells1;
-	simulate();
 }

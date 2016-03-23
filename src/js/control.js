@@ -1,6 +1,10 @@
 var lbm_canvas;
 var lbm_context;
 var lbm_worker;
+var lbm_btn_run;
+var lbm_btn_stop;
+var lbm_btn_continue;
+
 
 var GRID_SIZE_X = 150;
 var GRID_SIZE_Y = 100;
@@ -12,6 +16,11 @@ var DRAW_INTERVAL = 1000 / FPS;
 var densities;
 
 function on_body_load() {
+	lbm_btn_run = document.getElementById("lbm_btn_run");
+	lbm_btn_stop = document.getElementById("lbm_btn_stop");
+	lbm_btn_continue = document.getElementById("lbm_btn_continue");
+	lbm_btn_continue.disabled = true;
+
 	lbm_canvas = document.getElementById("lbm_canvas");
 	lbm_context = lbm_canvas.getContext("2d");
 	lbm_canvas.setAttribute("height", GRID_SIZE_Y * SCALE);
@@ -23,7 +32,6 @@ function on_body_load() {
 	lbm_worker.onmessage = worker_message;
 	set_lbm_option("cols", GRID_SIZE_X);
 	set_lbm_option("rows", GRID_SIZE_Y);
-	lbm_run();
 
 	draw_loop();
 }
@@ -43,7 +51,7 @@ function redraw() {
 }
 
 function worker_message(ev) {
-	// ev.data contains array of densities
+	// ev.data contains array of densitie
 	densities = ev.data;
 }
 
@@ -62,5 +70,19 @@ function set_lbm_option(option, value) {
 }
 
 function lbm_run() {
+	lbm_btn_continue.disabled = true;
+	lbm_btn_stop.disabled = false;
 	lbm_worker.postMessage({"cmd": "run"});
+}
+
+function lbm_stop() {
+	lbm_btn_continue.disabled = false;
+	lbm_btn_stop.disabled = true;
+	lbm_worker.postMessage({"cmd": "stop"});
+}
+
+function lbm_continue() {
+	lbm_btn_continue.disabled = true;
+	lbm_btn_stop.disabled = false;
+	lbm_worker.postMessage({"cmd": "continue"});
 }

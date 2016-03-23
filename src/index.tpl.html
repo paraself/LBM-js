@@ -4,11 +4,15 @@
 	<head>
 		<!-- include: "type": "js", "files": "js/control.min.js" -->
 		<style type="text/css">
-      		#lbm_canvas { border: 1px solid black; }
-    	</style>
+			#lbm_canvas { border: 1px solid black; }
+		</style>
 	</head>
 
 	<body onload="on_body_load();">
 		<canvas id="lbm_canvas"></canvas>
+		<br />
+		<button id="lbm_btn_run" onclick="lbm_run()">Run</button>
+		<button id="lbm_btn_stop" onclick="lbm_stop()">Stop</button>
+		<button id="lbm_btn_continue" onclick="lbm_continue()">Continue</button>
 	</body>
 </html>

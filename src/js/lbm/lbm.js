@@ -83,8 +83,8 @@ function propagation(cells_src, cells_dst) {
 	propagate(cells_src, cells_dst);
 
 	// all boundary conditions
-	for (var i = 0; i < boundary.length; i++) {
-		boundary[i](cells_src, cells_dst);
+	for (var key in boundary) {
+		boundary[key](cells_src, cells_dst);
 	}
 }
 

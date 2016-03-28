@@ -9,7 +9,9 @@ var c4 = Math.pow(c2, 2);
 
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
-var densities, velocities;
+
+var densities;
+var velocities_x, velocities_y;
 var which_cells = true;
 
 // constants
@@ -54,12 +56,14 @@ function make_cells(cols, rows) {
 	cells1 = new Array(cols);
 	cells2 = new Array(cols);
 	densities = new Array(cols);
-	velocities = new Array(cols);
+	velocities_x = new Array(cols);
+	velocities_y = new Array(cols);
 	for (var c = 0; c < cols; c++) {
 		cells1[c] = new Array(rows);
 		cells2[c] = new Array(rows);
 		densities[c] = new Array(rows);
-		velocities[c] = new Array(rows);
+		velocities_x[c] = new Array(rows);
+		velocities_y[c] = new Array(rows);
 		for (var r = 0; r < rows; r++) {
 			cells1[c][r] = new Array(9);
 			cells2[c][r] = new Array(9);
@@ -99,10 +103,13 @@ function collision(cells) {
 
 			// save densities & velocities for visualization
 			densities[c][r] = get_density(cells[c][r]);
-			velocities[c][r] = get_velocity(cells[c][r], densities[c][r]);
-			var v_dot_v = velocities[c][r].dot(velocities[c][r]);
+			var velocity = get_velocity(cells[c][r], densities[c][r]);
+			velocities_x[c][r] = velocity.x;
+			velocities_y[c][r] = velocity.y;
+
+			var v_dot_v = velocity.dot(velocity);
 			for (var i = 0; i < 9; i++) {
-				cells[c][r][i] = (1 - lbm_options.omega) * cells[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocities[c][r], v_dot_v);
+				cells[c][r][i] = (1 - lbm_options.omega) * cells[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocity, v_dot_v);
 			}
 		}
 	}
@@ -120,7 +127,7 @@ function simulate() {
 		which_cells = !which_cells;
 		collision(cells);
 
-		postMessage(densities);
+		postMessage({"densities": densities, "velocities_x": velocities_x, "velocities_y": velocities_y});
 
 		// use setTimeout to still be able to receive messages
 		setTimeout(simulate, 0);
@@ -185,8 +192,10 @@ self.onmessage = function(ev) {
 			stop = false;
 			break;
 		case "mouse_click":
-			var position = new Vec2(ev.data.mouse_x, ev.data.mouse_y);
-			mouse_click(position);
+			if (!stop) {
+				var position = new Vec2(ev.data.mouse_x, ev.data.mouse_y);
+				mouse_click(position);
+			}
 			break;
 	}
 };

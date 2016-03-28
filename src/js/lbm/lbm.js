@@ -9,7 +9,7 @@ var c4 = Math.pow(c2, 2);
 
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
-var densities;
+var densities, velocities;
 var which_cells = true;
 
 // constants
@@ -34,7 +34,7 @@ var directions = [
 ];
 
 // functions to be used
-var init_cells = init_cells_dirac;
+var init_cells = init_cells_impulse;
 var boundary = {
 	"top": bounceback_top,
 	"bottom": bounceback_bottom,
@@ -45,6 +45,8 @@ var boundary = {
 	"topright": bounceback_topright,
 	"bottomright": bounceback_bottomright
 };
+var mouse_action = impulse;
+// --------------------
 
 var stop = true;
 
@@ -52,10 +54,12 @@ function make_cells(cols, rows) {
 	cells1 = new Array(cols);
 	cells2 = new Array(cols);
 	densities = new Array(cols);
+	velocities = new Array(cols);
 	for (var c = 0; c < cols; c++) {
 		cells1[c] = new Array(rows);
 		cells2[c] = new Array(rows);
 		densities[c] = new Array(rows);
+		velocities[c] = new Array(rows);
 		for (var r = 0; r < rows; r++) {
 			cells1[c][r] = new Array(9);
 			cells2[c][r] = new Array(9);
@@ -89,16 +93,16 @@ function propagation(cells_src, cells_dst) {
 	}
 }
 
-function collision(cells_coll) {
-	for (var c = 0; c < cells_coll.length; c++) {
-		for (var r = 0; r < cells_coll[c].length; r++) {
+function collision(cells) {
+	for (var c = 0; c < cells.length; c++) {
+		for (var r = 0; r < cells[c].length; r++) {
 
-			// save densities for visualization
-			densities[c][r] = get_density(cells_coll[c][r]);
-			var velocity = get_velocity(cells_coll[c][r]);
-			var v_dot_v = velocity.dot(velocity);
+			// save densities & velocities for visualization
+			densities[c][r] = get_density(cells[c][r]);
+			velocities[c][r] = get_velocity(cells[c][r], densities[c][r]);
+			var v_dot_v = velocities[c][r].dot(velocities[c][r]);
 			for (var i = 0; i < 9; i++) {
-				cells_coll[c][r][i] = (1 - lbm_options.omega) * cells_coll[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocity, v_dot_v);
+				cells[c][r][i] = (1 - lbm_options.omega) * cells[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocities[c][r], v_dot_v);
 			}
 		}
 	}
@@ -119,7 +123,7 @@ function simulate() {
 		postMessage(densities);
 
 		// use setTimeout to still be able to receive messages
-		setTimeout(simulate, 1);
+		setTimeout(simulate, 0);
 	}
 
 	// wait longer when paused
@@ -130,14 +134,14 @@ function get_density(cell) {
 	return cell[0] + cell[1] + cell[2] + cell[3] + cell[4] + cell[5] + cell[6] + cell[7] + cell[8];
 }
 
-function get_velocity(cell) {
+function get_velocity(cell, deinsity) {
 	var velocity = new Vec2(cell[5] + cell[1] + cell[8] - cell[6] - cell[3] - cell[7], cell[7] + cell[4] + cell[8] - cell[6] - cell[2] - cell[5]);
-	velocity.mult(1 / get_density(cell));
+	velocity.mult(1 / deinsity);
 	return velocity;
 }
 
 function get_equi(subcell_num, density, velocity, v_dot_v) {
-	var dv;
+	var d_dot_v;
 	switch(subcell_num) {
 		case 0:
 			return FOUR_DIV_9 * density * (1 - 1.5 * v_dot_v / c2);
@@ -145,15 +149,19 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 		case 2:
 		case 3:
 		case 4:
-			dv = velocity.dot(directions[subcell_num]);
-			return ONE_DIV_9 * density * (1 + 3 * dv / c2 + 4.5 * Math.pow(dv, 2) / c4 - 1.5 * v_dot_v / c2);
+			d_dot_v = velocity.dot(directions[subcell_num]);
+			return ONE_DIV_9 * density * (1 + 3 * d_dot_v / c2 + 4.5 * Math.pow(d_dot_v, 2) / c4 - 1.5 * v_dot_v / c2);
 		case 5:
 		case 6:
 		case 7:
 		case 8:
-			dv = velocity.dot(directions[subcell_num]);
-			return ONE_DIV_36 * density * (1 + 3 * dv / c2 + 4.5 * Math.pow(dv, 2) / c4 - 1.5 * v_dot_v / c2);
+			d_dot_v = velocity.dot(directions[subcell_num]);
+			return ONE_DIV_36 * density * (1 + 3 * d_dot_v / c2 + 4.5 * Math.pow(d_dot_v, 2) / c4 - 1.5 * v_dot_v / c2);
 	}
+}
+
+function mouse_click(position) {
+	mouse_action(cells, position, 10);
 }
 
 // message handler
@@ -168,7 +176,6 @@ self.onmessage = function(ev) {
 		case "run":
 			stop = true;
 			init();
-			simulate();
 			stop = false;
 			break;
 		case "stop":
@@ -176,7 +183,11 @@ self.onmessage = function(ev) {
 			break;
 		case "continue":
 			stop = false;
-			simulate();
+			break;
+		case "mouse_click":
+			var position = new Vec2(ev.data.mouse_x, ev.data.mouse_y);
+			mouse_click(position);
+			break;
 	}
 };
 
@@ -185,4 +196,6 @@ function init() {
 	init_cells(cells1);
 	init_cells(cells2);
 	cells = cells1;
+
+	simulate();
 }

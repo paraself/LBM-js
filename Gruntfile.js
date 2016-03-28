@@ -10,9 +10,9 @@ module.exports = function(grunt) {
         src: ['src/js/lbm/**/*.js'],
         dest: 'dist/js/lbm.js'
       },
-      control: {
+      ui: {
         src: ['src/js/*.js'],
-        dest: 'dist/js/control.js'
+        dest: 'dist/js/ui.js'
       }
     },
     uglify: {
@@ -21,9 +21,9 @@ module.exports = function(grunt) {
           'dist/js/lbm.min.js': ['<%= concat.lbm.dest %>']
         }
       },
-      control: {
+      ui: {
         files: {
-          'dist/js/control.min.js': ['<%= concat.control.dest %>']
+          'dist/js/ui.min.js': ['<%= concat.ui.dest %>']
         }
       }
     },

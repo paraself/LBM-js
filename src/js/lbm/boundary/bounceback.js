@@ -1,33 +1,29 @@
 function bounceback_top(cells_src, cells_dst) {
 	for (var c = 1; c < cells_src.length - 1; c++) {
-		for (var r = 1; r < cells_src[c].length - 1; r++) {
-			cells_dst[c][0][0] = cells_src[c][0][0];
-			cells_dst[c][0][1] = cells_src[c - 1][0][1];
-			cells_dst[c][0][2] = cells_src[c][1][2];
-			cells_dst[c][0][3] = cells_src[c + 1][0][3];
-			cells_dst[c][0][4] = cells_src[c][0][2];
-			cells_dst[c][0][5] = cells_src[c - 1][1][5];
-			cells_dst[c][0][6] = cells_src[c + 1][1][6];
-			cells_dst[c][0][7] = cells_src[c][0][5];
-			cells_dst[c][0][8] = cells_src[c][0][6];
-		}
+		cells_dst[c][0][0] = cells_src[c][0][0];
+		cells_dst[c][0][1] = cells_src[c - 1][0][1];
+		cells_dst[c][0][2] = cells_src[c][1][2];
+		cells_dst[c][0][3] = cells_src[c + 1][0][3];
+		cells_dst[c][0][4] = cells_src[c][0][2];
+		cells_dst[c][0][5] = cells_src[c - 1][1][5];
+		cells_dst[c][0][6] = cells_src[c + 1][1][6];
+		cells_dst[c][0][7] = cells_src[c][0][5];
+		cells_dst[c][0][8] = cells_src[c][0][6];
 	}
 }
 
 function bounceback_bottom(cells_src, cells_dst) {
 	var max_r = cells_src[0].length - 1;
 	for (var c = 1; c < cells_src.length - 1; c++) {
-		for (var r = 1; r < cells_src[c].length - 1; r++) {
-			cells_dst[c][max_r][0] = cells_src[c][max_r][0];
-			cells_dst[c][max_r][1] = cells_src[c - 1][max_r][1];
-			cells_dst[c][max_r][2] = cells_src[c][max_r][4];
-			cells_dst[c][max_r][3] = cells_src[c + 1][max_r][3];
-			cells_dst[c][max_r][4] = cells_src[c][max_r - 1][4];
-			cells_dst[c][max_r][5] = cells_src[c][max_r][7];
-			cells_dst[c][max_r][6] = cells_src[c][max_r][8];
-			cells_dst[c][max_r][7] = cells_src[c + 1][max_r - 1][7];
-			cells_dst[c][max_r][8] = cells_src[c - 1][max_r - 1][8];
-		}
+		cells_dst[c][max_r][0] = cells_src[c][max_r][0];
+		cells_dst[c][max_r][1] = cells_src[c - 1][max_r][1];
+		cells_dst[c][max_r][2] = cells_src[c][max_r][4];
+		cells_dst[c][max_r][3] = cells_src[c + 1][max_r][3];
+		cells_dst[c][max_r][4] = cells_src[c][max_r - 1][4];
+		cells_dst[c][max_r][5] = cells_src[c][max_r][7];
+		cells_dst[c][max_r][6] = cells_src[c][max_r][8];
+		cells_dst[c][max_r][7] = cells_src[c + 1][max_r - 1][7];
+		cells_dst[c][max_r][8] = cells_src[c - 1][max_r - 1][8];
 	}
 }
 

@@ -129,7 +129,7 @@ function simulate() {
 		which_cells = !which_cells;
 		collision(cells);
 
-		postMessage({"densities": densities, "velocities_x": velocities_x, "velocities_y": velocities_y});
+		postMessage({densities: densities, velocities_x: velocities_x, velocities_y: velocities_y});
 
 		// use setTimeout to still be able to receive messages
 		setTimeout(simulate, 0);
@@ -175,13 +175,13 @@ self.onmessage = function(ev) {
 	var value = ev.data.value;
 	switch (cmd) {
 		case "set":
-			var option = ev.data.option;
-
-			if (option in lbm_options) {
-				lbm_options[option] = value;
-			}
-			if (option in active_scenario.options) {
-				active_scenario.options[option] = value;
+			for (var key in value) {
+				if (key in lbm_options) {
+					lbm_options[key] = value[key];
+				}
+				if (key in active_scenario.options) {
+					active_scenario.options[key] = value[key];
+				}
 			}
 			break;
 		case "run":
@@ -197,7 +197,7 @@ self.onmessage = function(ev) {
 			break;
 		case "mouse_click":
 			if (!stop) {
-				var position = new Vec2(ev.data.mouse_x, ev.data.mouse_y);
+				var position = new Vec2(value.mouse_x, value.mouse_y);
 				active_scenario.mouse_action(cells, position);
 			}
 			break;

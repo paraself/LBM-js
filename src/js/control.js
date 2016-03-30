@@ -35,8 +35,7 @@ function on_body_load() {
 	// initialize worker
 	lbm_worker = new Worker("js/lbm.min.js");
 	lbm_worker.onmessage = worker_message;
-	set_lbm_option("cols", GRID_SIZE_X);
-	set_lbm_option("rows", GRID_SIZE_Y);
+	set_lbm_options({cols: GRID_SIZE_X, rows: GRID_SIZE_Y});
 
 	draw_init();
 }
@@ -46,26 +45,31 @@ function worker_message(ev) {
 	velocities_y = ev.data.velocities_y;
 }
 
-function set_lbm_option(option, value) {
-	lbm_worker.postMessage({cmd: "set", option: option, value: value});
+function worker_command(cmd, value) {
+	lbm_worker.postMessage({cmd: cmd, value: value});
+}
+
+function set_lbm_options(options) {
+	worker_command("set", options);
+	//lbm_worker.postMessage({cmd: "set", option: option, value: value});
 }
 
 function lbm_run() {
 	lbm_btn_continue.disabled = true;
 	lbm_btn_stop.disabled = false;
-	lbm_worker.postMessage({cmd: "run"});
+	worker_command("run");
 }
 
 function lbm_stop() {
 	lbm_btn_continue.disabled = false;
 	lbm_btn_stop.disabled = true;
-	lbm_worker.postMessage({cmd: "stop"});
+	worker_command("stop");
 }
 
 function lbm_continue() {
 	lbm_btn_continue.disabled = true;
 	lbm_btn_stop.disabled = false;
-	lbm_worker.postMessage({cmd: "continue"});
+	worker_command("continue");
 }
 
 function mouse_moved(ev) {
@@ -74,5 +78,5 @@ function mouse_moved(ev) {
 }
 
 function mouse_click() {
-	lbm_worker.postMessage({cmd: "mouse_click", mouse_x: mouse_x, mouse_y: mouse_y});
+	worker_command("mouse_click", {mouse_x: mouse_x, mouse_y: mouse_y});
 }

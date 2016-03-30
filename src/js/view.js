@@ -5,9 +5,6 @@ var canvas_scale, canvas_width;
 
 var velocities_x, velocities_y, velocities_lengths;
 
-var FPS = 30;
-var INTERVAL = 1000 / FPS;
-
 function draw_init(cols, rows, scale) {
 	velocities_lengths = new Array(cols);
 	for (var i = 0; i < cols; i++) {
@@ -34,8 +31,8 @@ function draw() {
 	if (typeof velocities_x != "undefined" && typeof velocities_y != "undefined") {
 		redraw();
 	}
-	
-	setTimeout(draw, INTERVAL);
+
+	requestAnimationFrame(draw);
 }
 
 function redraw() {

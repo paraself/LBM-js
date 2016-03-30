@@ -1,19 +1,26 @@
-var init_density = 100;
-var impulse_density = 0.3;
+var scenario_impulse = {
+	init_cells: init_cells_impulse,
+	mouse_action: impulse,
+	options: {
+		init_density: 1,
+		impulse_intesity: 0.3,
+		radius: 10
+	}
+};
 
 function init_cells_impulse(cells) {
 	var zero_vel = new Vec2(0, 0);
 	for (var c = 0; c < cells.length; c++) {
 		for (var r = 0; r < cells[c].length; r++) {
 			for (var i = 0; i < 9; i++) {
-				cells[c][r][i] = get_equi(i, init_density, zero_vel, 0);
+				cells[c][r][i] = get_equi(i, scenario_impulse.options.init_density, zero_vel, 0);
 			}
 		}
 	}
 }
 
-function impulse(cells, position, radius) {
-	var radius_sqr = Math.pow(radius, 2);
+function impulse(cells, position) {
+	var radius_sqr = Math.pow(scenario_impulse.options.radius, 2);
 	var radius2_sqr = 2 * radius_sqr;
 	for (var c = 0; c < cells.length; c++) {
 		for (var r = 0; r < cells[c].length; r++) {
@@ -24,9 +31,9 @@ function impulse(cells, position, radius) {
 
 			// use 2 areas of same size; increase density in one, decrease it in the other to keep overall density roughly constant
 			if (dist_sqr < radius_sqr) {
-				dens = 1 + impulse_density;
+				dens = 1 + scenario_impulse.options.impulse_intesity;
 			} else if (dist_sqr < radius2_sqr) {
-				dens = 1 - impulse_density;
+				dens = 1 - scenario_impulse.options.impulse_intesity;
 			} else {
 				continue;
 			}

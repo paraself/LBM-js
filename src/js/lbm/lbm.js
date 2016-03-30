@@ -1,6 +1,9 @@
+// defaults
 var lbm_options = {
-	"omega": 1.8,
-	"c": 1
+	omega: 1.8,
+	c: 1,
+	rows: 100,
+	cols: 100
 };
 
 // TODO: recalculate when modifying c
@@ -35,19 +38,18 @@ var directions = [
 	new Vec2(1, 1)
 ];
 
-// functions to be used
-var init_cells = init_cells_impulse;
+// scenario contains initialization and mouse action
+var active_scenario = scenario_impulse;
 var boundary = {
-	"top": bounceback_top,
-	"bottom": bounceback_bottom,
-	"left": bounceback_left,
-	"right": bounceback_right,
-	"topleft": bounceback_topleft,
-	"bottomleft": bounceback_bottomleft,
-	"topright": bounceback_topright,
-	"bottomright": bounceback_bottomright
+	top: bounceback_top,
+	bottom: bounceback_bottom,
+	left: bounceback_left,
+	right: bounceback_right,
+	topleft: bounceback_topleft,
+	bottomleft: bounceback_bottomleft,
+	topright: bounceback_topright,
+	bottomright: bounceback_bottomright
 };
-var mouse_action = impulse;
 // --------------------
 
 var stop = true;
@@ -167,10 +169,6 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 	}
 }
 
-function mouse_click(position) {
-	mouse_action(cells, position, 10);
-}
-
 // message handler
 self.onmessage = function(ev) {
 	var cmd = ev.data.cmd;
@@ -178,7 +176,13 @@ self.onmessage = function(ev) {
 	switch (cmd) {
 		case "set":
 			var option = ev.data.option;
-			lbm_options[option] = value;
+
+			if (option in lbm_options) {
+				lbm_options[option] = value;
+			}
+			if (option in active_scenario.options) {
+				active_scenario.options[option] = value;
+			}
 			break;
 		case "run":
 			stop = true;
@@ -194,7 +198,7 @@ self.onmessage = function(ev) {
 		case "mouse_click":
 			if (!stop) {
 				var position = new Vec2(ev.data.mouse_x, ev.data.mouse_y);
-				mouse_click(position);
+				active_scenario.mouse_action(cells, position);
 			}
 			break;
 	}
@@ -202,8 +206,8 @@ self.onmessage = function(ev) {
 
 function init() {
 	make_cells(lbm_options.cols, lbm_options.rows);
-	init_cells(cells1);
-	init_cells(cells2);
+	active_scenario.init_cells(cells1);
+	active_scenario.init_cells(cells2);
 	cells = cells1;
 
 	simulate();

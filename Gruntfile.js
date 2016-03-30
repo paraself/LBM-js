@@ -7,12 +7,13 @@ module.exports = function(grunt) {
         separator: ';'
       },
       lbm: {
-        src: ['src/js/lbm/**/*.js'],
+        // lbm.js needs to be the last one
+        src: ['src/js/lbm/**/*.js', '!src/js/lbm/lbm.js', 'src/js/lbm/lbm.js'],
         dest: 'dist/js/lbm.js'
       },
-      ui: {
+      app: {
         src: ['src/js/*.js'],
-        dest: 'dist/js/ui.js'
+        dest: 'dist/js/app.js'
       }
     },
     uglify: {
@@ -21,9 +22,9 @@ module.exports = function(grunt) {
           'dist/js/lbm.min.js': ['<%= concat.lbm.dest %>']
         }
       },
-      ui: {
+      app: {
         files: {
-          'dist/js/ui.min.js': ['<%= concat.ui.dest %>']
+          'dist/js/app.min.js': ['<%= concat.app.dest %>']
         }
       }
     },

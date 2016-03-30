@@ -47,25 +47,25 @@ function worker_message(ev) {
 }
 
 function set_lbm_option(option, value) {
-	lbm_worker.postMessage({"cmd": "set", "option": option, "value": value});
+	lbm_worker.postMessage({cmd: "set", option: option, value: value});
 }
 
 function lbm_run() {
 	lbm_btn_continue.disabled = true;
 	lbm_btn_stop.disabled = false;
-	lbm_worker.postMessage({"cmd": "run"});
+	lbm_worker.postMessage({cmd: "run"});
 }
 
 function lbm_stop() {
 	lbm_btn_continue.disabled = false;
 	lbm_btn_stop.disabled = true;
-	lbm_worker.postMessage({"cmd": "stop"});
+	lbm_worker.postMessage({cmd: "stop"});
 }
 
 function lbm_continue() {
 	lbm_btn_continue.disabled = true;
 	lbm_btn_stop.disabled = false;
-	lbm_worker.postMessage({"cmd": "continue"});
+	lbm_worker.postMessage({cmd: "continue"});
 }
 
 function mouse_moved(ev) {
@@ -74,5 +74,5 @@ function mouse_moved(ev) {
 }
 
 function mouse_click() {
-	lbm_worker.postMessage({"cmd": "mouse_click", "mouse_x": mouse_x, "mouse_y": mouse_y});
+	lbm_worker.postMessage({cmd: "mouse_click", mouse_x: mouse_x, mouse_y: mouse_y});
 }

@@ -132,11 +132,12 @@ function simulate() {
 		postMessage({velocities_x: velocities_x, velocities_y: velocities_y});
 
 		// use setTimeout to still be able to receive messages
-		setTimeout(simulate, 0);
-	}
+		setTimeout(simulate, 1);
+	} else {
 
-	// wait longer when paused
-	setTimeout(simulate, 100);
+		// when paused, wait longer
+		setTimeout(simulate, 100);
+	}
 }
 
 function get_density(cell) {

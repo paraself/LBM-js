@@ -129,7 +129,7 @@ function simulate() {
 		which_cells = !which_cells;
 		collision(cells);
 
-		postMessage({densities: densities, velocities_x: velocities_x, velocities_y: velocities_y});
+		postMessage({velocities_x: velocities_x, velocities_y: velocities_y});
 
 		// use setTimeout to still be able to receive messages
 		setTimeout(simulate, 0);

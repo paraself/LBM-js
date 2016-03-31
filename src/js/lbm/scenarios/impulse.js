@@ -3,7 +3,7 @@ var scenario_impulse = {
 	mouse_action: impulse,
 	options: {
 		init_density: 1,
-		impulse_intesity: 0.3,
+		impulse_intensity: 0.3,
 		radius: 10
 	}
 };
@@ -31,9 +31,9 @@ function impulse(cells, position) {
 
 			// use 2 areas of same size; increase density in one, decrease it in the other to keep overall density roughly constant
 			if (dist_sqr < radius_sqr) {
-				dens = 1 + scenario_impulse.options.impulse_intesity;
+				dens = 1 + scenario_impulse.options.impulse_intensity;
 			} else if (dist_sqr < radius2_sqr) {
-				dens = 1 - scenario_impulse.options.impulse_intesity;
+				dens = 1 - scenario_impulse.options.impulse_intensity;
 			} else {
 				continue;
 			}

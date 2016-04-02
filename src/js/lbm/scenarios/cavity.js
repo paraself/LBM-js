@@ -17,11 +17,13 @@ var scenario_cavity = {
 function init_cells_cavity(cells) {
 	var zero_vel = new Vec2(0, 0);
 	var flow_vel = new Vec2(scenario_cavity.options.flow_vel, 0);
+	var v_dot_v = flow_vel.dot(flow_vel);
+	
 	for (var c = 0; c < cells.length; c++) {
 		
 		// top flow
 		for (var i = 0; i < 9; i++) {
-			cells[c][0][i] = get_equi(i, scenario_cavity.options.init_density, flow_vel, 0);
+			cells[c][0][i] = get_equi(i, scenario_cavity.options.init_density, flow_vel, v_dot_v);
 		}
 		
 		// the rest

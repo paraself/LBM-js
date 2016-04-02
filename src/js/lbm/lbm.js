@@ -39,7 +39,7 @@ var directions = [
 ];
 
 // scenario contains initialization, boundary conditions and mouse action
-var active_scenario = scenario_flow;
+var active_scenario = scenario_cavity;
 
 var stop = true;
 

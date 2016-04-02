@@ -1,6 +1,6 @@
 // defaults
 var lbm_options = {
-	omega: 1.8,
+	omega: 1.7,
 	c: 1,
 	rows: 100,
 	cols: 100
@@ -39,7 +39,7 @@ var directions = [
 ];
 
 // scenario contains initialization, boundary conditions and mouse action
-var active_scenario = scenario_impulse;
+var active_scenario = scenario_cavity;
 
 var stop = true;
 
@@ -186,7 +186,9 @@ self.onmessage = function(ev) {
 		case "mouse_click":
 			if (!stop) {
 				var position = new Vec2(value.mouse_x, value.mouse_y);
-				active_scenario.mouse_action(cells, position);
+				if (active_scenario.mouse_action !== undefined) {
+					active_scenario.mouse_action(cells, position);
+				}
 			}
 			break;
 	}

@@ -1,6 +1,16 @@
 var scenario_impulse = {
 	init_cells: init_cells_impulse,
 	mouse_action: impulse,
+    boundary: {
+        top: bounceback_top,
+        bottom: bounceback_bottom,
+        left: bounceback_left,
+        right: bounceback_right,
+        topleft: bounceback_topleft,
+        bottomleft: bounceback_bottomleft,
+        topright: bounceback_topright,
+        bottomright: bounceback_bottomright
+    },
 	options: {
 		init_density: 1,
 		impulse_intensity: 0.3,

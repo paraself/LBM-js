@@ -38,19 +38,8 @@ var directions = [
 	new Vec2(1, 1)
 ];
 
-// scenario contains initialization and mouse action
+// scenario contains initialization, boundary conditions and mouse action
 var active_scenario = scenario_impulse;
-var boundary = {
-	top: bounceback_top,
-	bottom: bounceback_bottom,
-	left: bounceback_left,
-	right: bounceback_right,
-	topleft: bounceback_topleft,
-	bottomleft: bounceback_bottomleft,
-	topright: bounceback_topright,
-	bottomright: bounceback_bottomright
-};
-// --------------------
 
 var stop = true;
 
@@ -94,8 +83,8 @@ function propagation(cells_src, cells_dst) {
 	propagate(cells_src, cells_dst);
 
 	// all boundary conditions
-	for (var key in boundary) {
-		boundary[key](cells_src, cells_dst);
+	for (var key in active_scenario.boundary) {
+		active_scenario.boundary[key](cells_src, cells_dst);
 	}
 }
 

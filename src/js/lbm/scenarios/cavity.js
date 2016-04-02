@@ -21,13 +21,13 @@ function init_cells_cavity(cells) {
 		
 		// top flow
 		for (var i = 0; i < 9; i++) {
-			cells[c][0][i] = get_equi(i, scenario_impulse.options.init_density, flow_vel, 0);
+			cells[c][0][i] = get_equi(i, scenario_cavity.options.init_density, flow_vel, 0);
 		}
 		
 		// the rest
 		for (var r = 1; r < cells[c].length; r++) {
 			for (i = 0; i < 9; i++) {
-				cells[c][r][i] = get_equi(i, scenario_impulse.options.init_density, zero_vel, 0);
+				cells[c][r][i] = get_equi(i, scenario_cavity.options.init_density, zero_vel, 0);
 			}
 		}
 	}

@@ -20,7 +20,7 @@ var scenario_flow = {
 function init_cells_flow(cells) {
 	var flow_vel = new Vec2(scenario_flow.options.init_velocity, 0);
 	var v_dot_v = flow_vel.dot(flow_vel);
-	var max_c = cells[0].length - 1;
+	var max_c = cells.length - 1;
 	
 	for (var r = 0; r < cells[0].length; r++) {
 		
@@ -31,7 +31,7 @@ function init_cells_flow(cells) {
 		}
 		
 		// the rest
-		for (var c = 1; c < cells.length - 1; c++) {
+		for (var c = 1; c < max_c; c++) {
 			for (i = 0; i < 9; i++) {
 				cells[c][r][i] = get_equi(i, scenario_flow.options.init_density, flow_vel, v_dot_v);
 			}

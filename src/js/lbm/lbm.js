@@ -6,9 +6,8 @@ var lbm_options = {
 	cols: 100
 };
 
-// TODO: recalculate when modifying c
-var c2 = Math.pow(lbm_options.c, 2);
-var c4 = Math.pow(c2, 2);
+// powers of c
+var c2, c4;
 
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
@@ -39,9 +38,14 @@ var directions = [
 ];
 
 // scenario contains initialization, boundary conditions and mouse action
-var active_scenario = scenario_flow;
+var active_scenario = scenario_impulse;
 
 var stop = true;
+
+function update_values() {
+	c2 = Math.pow(lbm_options.c, 2);
+	c4 = Math.pow(c2, 2);
+}
 
 function make_cells(cols, rows) {
 	cells1 = new Array(cols);
@@ -129,9 +133,9 @@ function get_density(cell) {
 	return cell[0] + cell[1] + cell[2] + cell[3] + cell[4] + cell[5] + cell[6] + cell[7] + cell[8];
 }
 
-function get_velocity(cell, deinsity) {
+function get_velocity(cell, density) {
 	var velocity = new Vec2(cell[5] + cell[1] + cell[8] - cell[6] - cell[3] - cell[7], cell[7] + cell[4] + cell[8] - cell[6] - cell[2] - cell[5]);
-	velocity.mult(1 / deinsity);
+	velocity.mult(1 / density);
 	return velocity;
 }
 
@@ -164,6 +168,9 @@ self.onmessage = function(ev) {
 			for (var key in value) {
 				if (key in lbm_options) {
 					lbm_options[key] = value[key];
+
+					// parameters may have changed
+					update_values();
 				}
 				if (key in active_scenario.options) {
 					active_scenario.options[key] = value[key];
@@ -184,11 +191,9 @@ self.onmessage = function(ev) {
 			simulate();
 			break;
 		case "mouse_click":
-			if (!stop) {
+			if (!stop && active_scenario.mouse_action !== undefined) {
 				var position = new Vec2(value.mouse_x, value.mouse_y);
-				if (active_scenario.mouse_action !== undefined) {
-					active_scenario.mouse_action(cells, position);
-				}
+				active_scenario.mouse_action(cells, position);
 			}
 			break;
 	}
@@ -199,4 +204,5 @@ function init() {
 	active_scenario.init_cells(cells1);
 	active_scenario.init_cells(cells2);
 	cells = cells1;
+	update_values();
 }

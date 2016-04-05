@@ -88,7 +88,9 @@ function propagation(cells_src, cells_dst) {
 
 	// all boundary conditions
 	for (var key in active_scenario.boundary) {
-		active_scenario.boundary[key](cells_src, cells_dst);
+		if (active_scenario.boundary.hasOwnProperty(key)) {
+			active_scenario.boundary[key](cells_src, cells_dst);
+		}
 	}
 }
 
@@ -159,6 +161,18 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 	}
 }
 
+function set_option(option, value) {
+	if (lbm_options.hasOwnProperty(option)) {
+		lbm_options[option] = value[option];
+
+		// parameters may have changed
+		update_values();
+	}
+	if (active_scenario.options.hasOwnProperty(option)) {
+		active_scenario.options[option] = value[option];
+	}
+}
+
 // message handler
 self.onmessage = function(ev) {
 	var cmd = ev.data.cmd;
@@ -166,14 +180,8 @@ self.onmessage = function(ev) {
 	switch (cmd) {
 		case "set":
 			for (var key in value) {
-				if (key in lbm_options) {
-					lbm_options[key] = value[key];
-
-					// parameters may have changed
-					update_values();
-				}
-				if (key in active_scenario.options) {
-					active_scenario.options[key] = value[key];
+				if (value.hasOwnProperty(key)) {
+					set_option(key, value);
 				}
 			}
 			break;

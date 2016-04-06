@@ -17,8 +17,8 @@ function on_body_load() {
 	lbm_btn_continue.disabled = true;
 
 	lbm_canvas = document.getElementById("lbm_canvas");
-	lbm_canvas.setAttribute("height", GRID_SIZE_Y * SCALE);
-	lbm_canvas.setAttribute("width", GRID_SIZE_X * SCALE);
+	lbm_canvas.setAttribute("height", GRID_SIZE_Y * SCALE + "px");
+	lbm_canvas.setAttribute("width", GRID_SIZE_X * SCALE + "px");
 
 	// mouse handling
 	lbm_canvas.onclick = mouse_click;

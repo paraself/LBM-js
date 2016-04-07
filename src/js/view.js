@@ -55,7 +55,7 @@ function set_pixel(data, pos_x, pos_y, color, scale, width) {
 			data[idx++] = color[0];
 			data[idx++] = color[1];
 			data[idx++] = color[2];
-			data[idx++] = color[3];
+			data[idx] = color[3];
 		}
 	}
 }

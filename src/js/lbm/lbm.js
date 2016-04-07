@@ -37,8 +37,14 @@ var directions = [
 	new Vec2(1, 1)
 ];
 
+var SCENARIOS = {
+	0: scenario_impulse,
+	1: scenario_cavity,
+	2: scenario_flow
+};
+
 // scenario contains initialization, boundary conditions and mouse action
-var active_scenario = scenario_impulse;
+var active_scenario;
 
 var stop = true;
 
@@ -161,15 +167,49 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 	}
 }
 
-function set_option(option, value) {
-	if (lbm_options.hasOwnProperty(option)) {
-		lbm_options[option] = value[option];
+function set_options(options) {
+	for (var key in options) {
+		if (options.hasOwnProperty(key)) {
+			if (lbm_options.hasOwnProperty(key)) {
+				lbm_options[key] = options[key];
 
-		// parameters may have changed
-		update_values();
+				// parameters may have changed
+				update_values();
+			}
+			if (active_scenario !== undefined && active_scenario.options.hasOwnProperty(key)) {
+				active_scenario.options[key] = value[key];
+			}
+		}
 	}
-	if (active_scenario.options.hasOwnProperty(option)) {
-		active_scenario.options[option] = value[option];
+}
+
+function set_scenario(scenario) {
+	if (SCENARIOS.hasOwnProperty(scenario)) {
+		active_scenario = SCENARIOS[scenario];
+	}
+}
+
+function run_sim() {
+	if (active_scenario !== undefined) {
+		init();
+	}
+	start_sim();
+}
+
+function stop_sim() {
+	stop = true;
+}
+
+function start_sim() {
+	if (active_scenario !== undefined) {
+		stop = false;
+		simulate();
+	}
+}
+
+function mouse_click(x, y) {
+	if (!stop && active_scenario.mouse_action !== undefined) {
+		active_scenario.mouse_action(cells, new Vec2(x, y));
 	}
 }
 
@@ -179,30 +219,22 @@ self.onmessage = function(ev) {
 	var value = ev.data.value;
 	switch (cmd) {
 		case "set":
-			for (var key in value) {
-				if (value.hasOwnProperty(key)) {
-					set_option(key, value);
-				}
-			}
+			set_options(value);
 			break;
 		case "run":
-			stop = true;
-			init();
-			stop = false;
-			simulate();
+			run_sim();
 			break;
 		case "stop":
-			stop = true;
+			stop_sim();
 			break;
 		case "continue":
-			stop = false;
-			simulate();
+			start_sim();
 			break;
 		case "mouse_click":
-			if (!stop && active_scenario.mouse_action !== undefined) {
-				var position = new Vec2(value.mouse_x, value.mouse_y);
-				active_scenario.mouse_action(cells, position);
-			}
+			mouse_click(value.mouse_x, value.mouse_y);
+			break;
+		case "select":
+			set_scenario(value);
 			break;
 	}
 };

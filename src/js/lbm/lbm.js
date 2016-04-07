@@ -190,6 +190,7 @@ function set_scenario(scenario) {
 }
 
 function run_sim() {
+	stop_sim();
 	if (active_scenario !== undefined) {
 		init();
 	}

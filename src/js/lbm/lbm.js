@@ -38,9 +38,9 @@ var directions = [
 ];
 
 var SCENARIOS = {
-	0: scenario_impulse,
-	1: scenario_cavity,
-	2: scenario_flow
+	0: new Impulse(),
+	1: new Cavity(),
+	2: new Flow()
 };
 
 // scenario contains initialization, boundary conditions and mouse action
@@ -93,11 +93,7 @@ function propagation(cells_src, cells_dst) {
 	propagate(cells_src, cells_dst);
 
 	// all boundary conditions
-	for (var key in active_scenario.boundary) {
-		if (active_scenario.boundary.hasOwnProperty(key)) {
-			active_scenario.boundary[key](cells_src, cells_dst);
-		}
-	}
+	active_scenario.boundary(cells_src, cells_dst);
 }
 
 function collision(cells) {

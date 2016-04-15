@@ -11,7 +11,7 @@ var c2, c4;
 
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
-
+var obstacles;
 var densities;
 var velocities_x, velocities_y;
 var which_cells = true;
@@ -59,15 +59,18 @@ function make_cells(cols, rows) {
 	densities = new Array(cols);
 	velocities_x = new Array(cols);
 	velocities_y = new Array(cols);
+	obstacles = new Array(cols);
 	for (var c = 0; c < cols; c++) {
 		cells1[c] = new Array(rows);
 		cells2[c] = new Array(rows);
 		densities[c] = new Array(rows);
 		velocities_x[c] = new Array(rows);
 		velocities_y[c] = new Array(rows);
+		obstacles[c] = new Array(rows);
 		for (var r = 0; r < rows; r++) {
 			cells1[c][r] = new Array(9);
 			cells2[c][r] = new Array(9);
+			obstacles[c][r] = false;
 		}
 	}
 }
@@ -75,15 +78,17 @@ function make_cells(cols, rows) {
 function propagate(cells_src, cells_dst) {
 	for (var c = 1; c < cells_src.length - 1; c++) {
 		for (var r = 1; r < cells_src[c].length - 1; r++) {
-			cells_dst[c][r][0] = cells_src[c][r][0];
-			cells_dst[c][r][1] = cells_src[c - 1][r][1];
-			cells_dst[c][r][2] = cells_src[c][r + 1][2];
-			cells_dst[c][r][3] = cells_src[c + 1][r][3];
-			cells_dst[c][r][4] = cells_src[c][r - 1][4];
-			cells_dst[c][r][5] = cells_src[c - 1][r + 1][5];
-			cells_dst[c][r][6] = cells_src[c + 1][r + 1][6];
-			cells_dst[c][r][7] = cells_src[c + 1][r - 1][7];
-			cells_dst[c][r][8] = cells_src[c - 1][r - 1][8];
+			if (!obstacles[c][r]) {
+				cells_dst[c][r][0] = cells_src[c][r][0];
+				cells_dst[c][r][1] = cells_src[c - 1][r][1];
+				cells_dst[c][r][2] = cells_src[c][r + 1][2];
+				cells_dst[c][r][3] = cells_src[c + 1][r][3];
+				cells_dst[c][r][4] = cells_src[c][r - 1][4];
+				cells_dst[c][r][5] = cells_src[c - 1][r + 1][5];
+				cells_dst[c][r][6] = cells_src[c + 1][r + 1][6];
+				cells_dst[c][r][7] = cells_src[c + 1][r - 1][7];
+				cells_dst[c][r][8] = cells_src[c - 1][r - 1][8];
+			}
 		}
 	}
 }
@@ -94,6 +99,9 @@ function propagation(cells_src, cells_dst) {
 
 	// all boundary conditions
 	active_scenario.boundary(cells_src, cells_dst);
+
+	// bounceback from obstacles
+	bounceback_obstacles(cells_src, cells_dst, obstacles);
 }
 
 function collision(cells) {

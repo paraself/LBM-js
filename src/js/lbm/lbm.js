@@ -248,6 +248,9 @@ function init() {
 	make_cells(lbm_options.cols, lbm_options.rows);
 	active_scenario.init_cells(cells1);
 	active_scenario.init_cells(cells2);
+	if (active_scenario.init_obstacles !== undefined) {
+		active_scenario.init_obstacles(obstacles);
+	}
 	cells = cells1;
 	update_values();
 }

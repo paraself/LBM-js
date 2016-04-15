@@ -22,8 +22,12 @@ function draw_init(cols, rows, scale) {
 }
 
 function worker_message(ev) {
-	velocities_x = ev.data.velocities_x;
-	velocities_y = ev.data.velocities_y;
+	switch (ev.data.cmd) {
+		case "update":
+			velocities_x = ev.data.value.velocities_x;
+			velocities_y = ev.data.value.velocities_y;
+			break;
+	}
 }
 
 function draw() {

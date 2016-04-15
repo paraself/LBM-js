@@ -134,7 +134,8 @@ function simulate() {
 		which_cells = !which_cells;
 		collision(cells);
 
-		postMessage({velocities_x: velocities_x, velocities_y: velocities_y});
+		// update views
+		message("update", {velocities_x: velocities_x, velocities_y: velocities_y});
 
 		// use setTimeout to still be able to receive messages
 		setTimeout(simulate, 0);
@@ -216,6 +217,10 @@ function mouse_click(x, y) {
 	if (!stop && active_scenario.mouse_action !== undefined) {
 		active_scenario.mouse_action(cells, new Vec2(x, y));
 	}
+}
+
+function message(cmd, value) {
+	postMessage({cmd: cmd, value: value});
 }
 
 // message handler

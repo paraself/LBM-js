@@ -36,4 +36,10 @@ function Flow() {
 			}
 		}
 	};
+
+	this.mouse_action = function(cells, position) {
+		var c = position.x;
+		var r = position.y;
+		obstacles[c][r] = !obstacles[c][r];
+	};
 }

@@ -73,8 +73,9 @@ function lbm_continue() {
 }
 
 function mouse_moved(ev) {
-	mouse_x = Math.floor(ev.pageX / SCALE);
-	mouse_y = Math.floor(ev.pageY / SCALE);
+	var br = lbm_canvas.getBoundingClientRect();
+	mouse_x = Math.floor((ev.clientX - br.left) * lbm_canvas.width / (br.right - br.left) / SCALE);
+	mouse_y = Math.floor((ev.clientY - br.top) * lbm_canvas.height / (br.bottom - br.top) / SCALE);
 }
 
 function mouse_click() {

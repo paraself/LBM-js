@@ -99,3 +99,21 @@ function bounceback_bottomright(cells_src, cells_dst) {
 	cells_dst[max_c][max_r][6] = cells_src[max_c][max_r][8];
 	cells_dst[max_c][max_r][8] = cells_src[max_c - 1][max_r - 1][8];
 }
+
+function bounceback_obstacles(cells_src, cells_dst, obstacles) {
+	// full way bounceback here instead of half way
+	for (var c = 1; c < cells_src.length - 1; c++) {
+		for (var r = 1; r < cells_src[c].length - 1; r++) {
+			if (obstacles[c][r]) {
+				cells_dst[c][r][1] = cells_src[c + 1][r][3];
+				cells_dst[c][r][2] = cells_src[c][r - 1][4];
+				cells_dst[c][r][3] = cells_src[c - 1][r][1];
+				cells_dst[c][r][4] = cells_src[c][r + 1][2];
+				cells_dst[c][r][5] = cells_src[c + 1][r - 1][7];
+				cells_dst[c][r][6] = cells_src[c - 1][r - 1][8];
+				cells_dst[c][r][7] = cells_src[c - 1][r + 1][5];
+				cells_dst[c][r][8] = cells_src[c + 1][r + 1][6];
+			}
+		}
+	}
+}

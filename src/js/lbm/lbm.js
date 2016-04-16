@@ -1,6 +1,6 @@
 // defaults
 var lbm_options = {
-	omega: 1.7,
+	omega: 1.5,
 	c: 1,
 	rows: 100,
 	cols: 100
@@ -49,7 +49,7 @@ var active_scenario;
 var stop = true;
 
 function update_values() {
-	c2 = Math.pow(lbm_options.c, 2);
+	c2 = Math.pow(get_option("c"), 2);
 	c4 = Math.pow(c2, 2);
 }
 
@@ -99,12 +99,11 @@ function propagation(cells_src, cells_dst) {
 
 	// all boundary conditions
 	active_scenario.boundary(cells_src, cells_dst);
-
-	// bounceback from obstacles
 	bounceback_obstacles(cells_src, cells_dst, obstacles);
 }
 
 function collision(cells) {
+	var omega = get_option("omega");
 	for (var c = 0; c < cells.length; c++) {
 		for (var r = 0; r < cells[c].length; r++) {
 
@@ -116,7 +115,7 @@ function collision(cells) {
 
 			var v_dot_v = velocity.dot(velocity);
 			for (var i = 0; i < 9; i++) {
-				cells[c][r][i] = (1 - lbm_options.omega) * cells[c][r][i] + lbm_options.omega * get_equi(i, densities[c][r], velocity, v_dot_v);
+				cells[c][r][i] = (1 - omega) * cells[c][r][i] + omega * get_equi(i, densities[c][r], velocity, v_dot_v);
 			}
 		}
 	}
@@ -175,16 +174,25 @@ function get_equi(subcell_num, density, velocity, v_dot_v) {
 function set_options(options) {
 	for (var key in options) {
 		if (options.hasOwnProperty(key)) {
-			if (lbm_options.hasOwnProperty(key)) {
+			// option of scenario has higher priority
+			if (active_scenario !== undefined && active_scenario.options.hasOwnProperty(key)) {
+				active_scenario.options[key] = value[key];
+			} else if (lbm_options.hasOwnProperty(key)) {
 				lbm_options[key] = options[key];
 
 				// parameters may have changed
 				update_values();
 			}
-			if (active_scenario !== undefined && active_scenario.options.hasOwnProperty(key)) {
-				active_scenario.options[key] = value[key];
-			}
 		}
+	}
+}
+
+function get_option(option) {
+	// option of scenario has higher priority
+	if (active_scenario !== undefined && active_scenario.options !== undefined && active_scenario.options.hasOwnProperty(option)) {
+		return active_scenario.options[option];
+	} else if (lbm_options.hasOwnProperty(option)) {
+		return lbm_options[option];
 	}
 }
 
@@ -250,7 +258,7 @@ self.onmessage = function(ev) {
 };
 
 function init() {
-	make_cells(lbm_options.cols, lbm_options.rows);
+	make_cells(get_option("cols"), get_option("rows"));
 	active_scenario.init_cells(cells1);
 	active_scenario.init_cells(cells2);
 	if (active_scenario.init_obstacles !== undefined) {

@@ -104,7 +104,7 @@ function collision(cells) {
 	for (var c = 0; c < cells.length; c++) {
 		for (var r = 0; r < cells[c].length; r++) {
 
-			// save densities & velocities for visualization
+			// save velocities for visualization
 			var density = get_density(cells[c][r]);
 			var velocity = get_velocity(cells[c][r], density);
 			velocities_x[c][r] = velocity.x;
@@ -186,7 +186,7 @@ function set_options(options) {
 
 function get_option(option) {
 	// option of scenario has higher priority
-	if (active_scenario !== undefined && active_scenario.options !== undefined && active_scenario.options.hasOwnProperty(option)) {
+	if (active_scenario !== undefined && active_scenario.options.hasOwnProperty(option)) {
 		return active_scenario.options[option];
 	} else if (lbm_options.hasOwnProperty(option)) {
 		return lbm_options[option];

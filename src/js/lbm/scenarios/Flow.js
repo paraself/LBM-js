@@ -1,10 +1,10 @@
 function Flow() {
-	var options = {
+	this.options = {
 		init_density: 1,
 		density_left: 1.5,
 		density_right: 0.5,
 		init_velocity: 0,
-		obstacle_pos: 1/3,
+		obstacle_pos: 1/5,
 		obstacle_size: 1/5
 	};
 
@@ -18,7 +18,7 @@ function Flow() {
 	};
 
 	this.init_cells = function(cells) {
-		var flow_vel = new Vec2(options.init_velocity, 0);
+		var flow_vel = new Vec2(this.options.init_velocity, 0);
 		var v_dot_v = flow_vel.dot(flow_vel);
 		var max_c = cells.length - 1;
 
@@ -26,14 +26,14 @@ function Flow() {
 
 			// left & right
 			for (var i = 0; i < 9; i++) {
-				cells[0][r][i] = get_equi(i, options.density_left, flow_vel, v_dot_v);
-				cells[max_c][r][i] = get_equi(i, options.density_right, flow_vel, v_dot_v);
+				cells[0][r][i] = get_equi(i, this.options.density_left, flow_vel, v_dot_v);
+				cells[max_c][r][i] = get_equi(i, this.options.density_right, flow_vel, v_dot_v);
 			}
 
 			// the rest
 			for (var c = 1; c < max_c; c++) {
 				for (i = 0; i < 9; i++) {
-					cells[c][r][i] = get_equi(i, options.init_density, flow_vel, v_dot_v);
+					cells[c][r][i] = get_equi(i, this.options.init_density, flow_vel, v_dot_v);
 				}
 			}
 		}
@@ -41,9 +41,9 @@ function Flow() {
 
 	this.init_obstacles = function(obstacles) {
 		// position of default obstacle
-		var obstacle_col = Math.floor(options.obstacle_pos * lbm_options.cols);
-		var obstacle_row_min = Math.floor(lbm_options.rows / 2 - options.obstacle_size / 2 * lbm_options.rows);
-		var obstacle_row_max = Math.floor(lbm_options.rows / 2 + options.obstacle_size / 2 * lbm_options.rows);
+		var obstacle_col = Math.floor(this.options.obstacle_pos * lbm_options.cols);
+		var obstacle_row_min = Math.floor(lbm_options.rows / 2 - this.options.obstacle_size / 2 * lbm_options.rows);
+		var obstacle_row_max = Math.floor(lbm_options.rows / 2 + this.options.obstacle_size / 2 * lbm_options.rows);
 
 		for (var r = obstacle_row_min; r <= obstacle_row_max; r++) {
 			obstacles[obstacle_col][r] = true;

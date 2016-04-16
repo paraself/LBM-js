@@ -4,7 +4,7 @@ function Flow() {
 		density_left: 1.5,
 		density_right: 0.5,
 		init_velocity: 0,
-		obstacle_pos: 1/5,
+		obstacle_pos: 1/4,
 		obstacle_size: 1/5
 	};
 

@@ -1,6 +1,6 @@
 // defaults
 var lbm_options = {
-	omega: 1.5,
+	omega: 1.7,
 	c: 1,
 	rows: 100,
 	cols: 100

@@ -12,7 +12,6 @@ var c2, c4;
 // use 2 arrays to switch between when streaming
 var cells1, cells2, cells;
 var obstacles;
-var densities;
 var velocities_x, velocities_y;
 var which_cells = true;
 
@@ -56,14 +55,12 @@ function update_values() {
 function make_cells(cols, rows) {
 	cells1 = new Array(cols);
 	cells2 = new Array(cols);
-	densities = new Array(cols);
 	velocities_x = new Array(cols);
 	velocities_y = new Array(cols);
 	obstacles = new Array(cols);
 	for (var c = 0; c < cols; c++) {
 		cells1[c] = new Array(rows);
 		cells2[c] = new Array(rows);
-		densities[c] = new Array(rows);
 		velocities_x[c] = new Array(rows);
 		velocities_y[c] = new Array(rows);
 		obstacles[c] = new Array(rows);
@@ -108,14 +105,14 @@ function collision(cells) {
 		for (var r = 0; r < cells[c].length; r++) {
 
 			// save densities & velocities for visualization
-			densities[c][r] = get_density(cells[c][r]);
-			var velocity = get_velocity(cells[c][r], densities[c][r]);
+			var density = get_density(cells[c][r]);
+			var velocity = get_velocity(cells[c][r], density);
 			velocities_x[c][r] = velocity.x;
 			velocities_y[c][r] = velocity.y;
 
 			var v_dot_v = velocity.dot(velocity);
 			for (var i = 0; i < 9; i++) {
-				cells[c][r][i] = (1 - omega) * cells[c][r][i] + omega * get_equi(i, densities[c][r], velocity, v_dot_v);
+				cells[c][r][i] = (1 - omega) * cells[c][r][i] + omega * get_equi(i, density, velocity, v_dot_v);
 			}
 		}
 	}

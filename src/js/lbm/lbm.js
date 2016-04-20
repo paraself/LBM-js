@@ -40,7 +40,8 @@ var directions = [
 var SCENARIOS = {
 	0: new Impulse(),
 	1: new Cavity(),
-	2: new Flow()
+	2: new Flow(),
+	3: new Obstacles()
 };
 
 // scenario contains initialization, boundary conditions and mouse action
@@ -101,7 +102,9 @@ function propagation(cells_src, cells_dst) {
 	propagate(cells_src, cells_dst);
 
 	// all boundary conditions
-	active_scenario.boundary(cells_src, cells_dst);
+	if (active_scenario.boundary !== undefined) {
+		active_scenario.boundary(cells_src, cells_dst);
+	}
 	bounceback_obstacles(cells_src, cells_dst, obstacles);
 }
 

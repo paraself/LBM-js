@@ -12,7 +12,8 @@ var SCALE = 3;
 var SCENARIOS = {
 	0: "impulse",
 	1: "cavity",
-	2: "flow"
+	2: "flow",
+	3: "obstacles"
 };
 
 var mouse_x, mouse_y;

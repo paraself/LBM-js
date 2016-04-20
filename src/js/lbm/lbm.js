@@ -225,7 +225,7 @@ function mouse_click(x, y) {
 }
 
 function message(cmd, value) {
-	postMessage({cmd: cmd, value: value});
+	postMessage(JSON.stringify({cmd: cmd, value: value}));
 }
 
 // message handler

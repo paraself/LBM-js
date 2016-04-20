@@ -22,11 +22,17 @@ function draw_init(cols, rows, scale) {
 }
 
 function worker_message(ev) {
-	switch (ev.data.cmd) {
-		case "update":
-			velocities_x = ev.data.value.velocities_x;
-			velocities_y = ev.data.value.velocities_y;
-			break;
+	try {
+		var data = JSON.parse(ev.data);
+
+		switch (data.cmd) {
+			case "update":
+				velocities_x = data.value.velocities_x;
+				velocities_y = data.value.velocities_y;
+				break;
+		}
+	} catch (e) {
+		console.error(e);
 	}
 }
 

@@ -46,10 +46,15 @@ var SCENARIOS = {
 // scenario contains initialization, boundary conditions and mouse action
 var active_scenario;
 
+// is updated to contain lbm- and scenario options
+var options;
+
 var stop = true;
 
 function update_values() {
-	c2 = Math.pow(get_option("c"), 2);
+	options = get_options();
+
+	c2 = Math.pow(options.c, 2);
 	c4 = Math.pow(c2, 2);
 }
 
@@ -101,7 +106,6 @@ function propagation(cells_src, cells_dst) {
 }
 
 function collision(cells) {
-	var omega = get_option("omega");
 	for (var c = 0; c < cells.length; c++) {
 		for (var r = 0; r < cells[c].length; r++) {
 
@@ -113,7 +117,7 @@ function collision(cells) {
 
 			var v_dot_v = velocity.dot(velocity);
 			for (var i = 0; i < 9; i++) {
-				cells[c][r][i] = (1 - omega) * cells[c][r][i] + omega * get_equi(i, density, velocity, v_dot_v);
+				cells[c][r][i] = (1 - options.omega) * cells[c][r][i] + options.omega * get_equi(i, density, velocity, v_dot_v);
 			}
 		}
 	}
@@ -121,7 +125,7 @@ function collision(cells) {
 
 function simulate() {
 	if (!stop) {
-		for (var i = 0; i < get_option("steps_per_frame"); i++) {
+		for (var i = 0; i < options.steps_per_frame; i++) {
 			if (which_cells) {
 				propagation(cells1, cells2);
 				cells = cells2;
@@ -179,21 +183,33 @@ function set_options(options) {
 				active_scenario.options[key] = value[key];
 			} else if (lbm_options.hasOwnProperty(key)) {
 				lbm_options[key] = options[key];
-
-				// parameters may have changed
-				update_values();
 			}
 		}
 	}
+
+	update_values();
 }
 
-function get_option(option) {
-	// option of scenario has higher priority
-	if (active_scenario !== undefined && active_scenario.options.hasOwnProperty(option)) {
-		return active_scenario.options[option];
-	} else if (lbm_options.hasOwnProperty(option)) {
-		return lbm_options[option];
+function get_options() {
+	var options = {};
+
+	// copy default lbm options
+	for (var key in lbm_options) {
+		if (lbm_options.hasOwnProperty(key)) {
+			options[key] = lbm_options[key];
+		}
 	}
+
+	// copy scenario options (overwrite defaults)
+	if (active_scenario !== undefined) {
+		for (key in active_scenario.options) {
+			if (active_scenario.options.hasOwnProperty(key)) {
+				options[key] = active_scenario.options[key];
+			}
+		}
+	}
+
+	return options;
 }
 
 function set_scenario(scenario) {
@@ -259,12 +275,13 @@ self.onmessage = function(ev) {
 };
 
 function init() {
-	make_cells(get_option("cols"), get_option("rows"));
+	update_values();
+
+	make_cells(options.cols, options.rows);
 	active_scenario.init_cells(cells1);
 	active_scenario.init_cells(cells2);
 	if (active_scenario.init_obstacles !== undefined) {
 		active_scenario.init_obstacles(obstacles);
 	}
 	cells = cells1;
-	update_values();
 }

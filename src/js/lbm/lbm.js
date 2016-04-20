@@ -3,7 +3,8 @@ var lbm_options = {
 	omega: 1.7,
 	c: 1,
 	rows: 100,
-	cols: 100
+	cols: 100,
+	steps_per_frame: 5
 };
 
 // powers of c
@@ -120,15 +121,17 @@ function collision(cells) {
 
 function simulate() {
 	if (!stop) {
-		if (which_cells) {
-			propagation(cells1, cells2);
-			cells = cells2;
-		} else {
-			propagation(cells2, cells1);
-			cells = cells1;
+		for (var i = 0; i < get_option("steps_per_frame"); i++) {
+			if (which_cells) {
+				propagation(cells1, cells2);
+				cells = cells2;
+			} else {
+				propagation(cells2, cells1);
+				cells = cells1;
+			}
+			which_cells = !which_cells;
+			collision(cells);
 		}
-		which_cells = !which_cells;
-		collision(cells);
 
 		// update views
 		message("update", {velocities_x: velocities_x, velocities_y: velocities_y});
@@ -196,6 +199,7 @@ function get_option(option) {
 function set_scenario(scenario) {
 	if (SCENARIOS.hasOwnProperty(scenario)) {
 		active_scenario = SCENARIOS[scenario];
+		update_values();
 	}
 }
 

@@ -1,7 +1,7 @@
 function Obstacles() {
     this.options = {
         init_density: 1,
-        init_velocity: 0.2,
+        init_velocity: 0.15,
         obstacle_pos: 1/4,
         obstacle_size: 1/5
     };

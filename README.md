@@ -1,6 +1,5 @@
 # LBM-js
 Lattice Boltzmann fluid simulations using JavaScript.
-WIP.
 
 ## Build
 1. clone repository

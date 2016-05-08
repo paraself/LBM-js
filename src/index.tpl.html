@@ -14,6 +14,9 @@
 		<label for="lbm_select">Scenario:</label>
 		<select id="lbm_select"></select>
 		<br>
+		<label for="lbm_range_steps">Steps per frame: </label><span id="lbm_span_steps"></span>
+		<input type="range" step="1" id="lbm_range_steps" onchange="lbm_steps_changed()">
+		<br>
 		<button id="lbm_btn_run" onclick="lbm_run()">Run</button>
 		<button id="lbm_btn_stop" onclick="lbm_stop()">Stop</button>
 		<button id="lbm_btn_continue" onclick="lbm_continue()">Continue</button>
